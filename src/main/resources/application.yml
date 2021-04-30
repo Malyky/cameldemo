@@ -1,0 +1,3 @@
+cameldemo:
+  api:
+    path: '/camel'
