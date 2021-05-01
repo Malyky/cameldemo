@@ -11,5 +11,23 @@ ${name}
 <p>"${name}"</p>
 
 <p>Welcome to <span th:text="${name}">Our App</span></p>
+
+
+
+<table>
+    <thead>
+    <tr>
+        <th> Title </th>
+        <th> Author </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}">
+        <td><span th:text="${book.title}"> Title </span></td>
+        <td><!--/*@thymesVar id="book" type=""*/-->
+        <span th:text="${book.author}"> Author </span></td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>
