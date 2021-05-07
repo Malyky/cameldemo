@@ -1,22 +1,29 @@
 package com.example.demo;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 
-@SpringBootApplication
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan
 public class DemoApplication {
 
     public static void main(String[] args) {
         System.getProperty("java.class.path");
         SpringApplication.run(DemoApplication.class, args);
+        //CamelContext context = new DefaultCamelContext();
     }
 
     @Bean
