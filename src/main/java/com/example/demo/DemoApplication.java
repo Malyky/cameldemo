@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -20,10 +21,25 @@ import java.util.Arrays;
 @ComponentScan
 public class DemoApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.getProperty("java.class.path");
         SpringApplication.run(DemoApplication.class, args);
-        //CamelContext context = new DefaultCamelContext();
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                 //from("file:inbox?noop=true")
+                  //       .to("file:outbox");
+
+
+                    from("stream:in?promptMessage=Enter something:")
+                            .to("file:data/outbox");
+                }
+
+
+        });
+        context.start();
+        Thread.sleep(10000);
+        //context.stop();
     }
 
     @Bean
