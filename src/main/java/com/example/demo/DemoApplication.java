@@ -24,22 +24,22 @@ public class DemoApplication {
     public static void main(String[] args) throws Exception {
         System.getProperty("java.class.path");
         SpringApplication.run(DemoApplication.class, args);
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(new RouteBuilder() {
-                public void configure() {
-                 //from("file:inbox?noop=true")
-                  //       .to("file:outbox");
-
-
-                    from("stream:in?promptMessage=Enter something:")
-                            .to("file:data/outbox");
-                }
-
-
-        });
-        context.start();
-        Thread.sleep(10000);
-        //context.stop();
+//        CamelContext context = new DefaultCamelContext();
+//        context.addRoutes(new RouteBuilder() {
+//                public void configure() {
+//                 //from("file:inbox?noop=true")
+//                  //       .to("file:outbox");
+//
+//
+//                    from("stream:in?promptMessage=Enter something:")
+//                            .to("file:data/outbox");
+//                }
+//
+//
+//        });
+//        context.start();
+//        Thread.sleep(10000);
+//        context.stop();
     }
 
     @Bean
