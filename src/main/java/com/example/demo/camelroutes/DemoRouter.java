@@ -1,21 +1,28 @@
 package com.example.demo.camelroutes;
 
-import org.apache.camel.Route;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DemoRouter extends RouteBuilder implements InitializingBean {
+public class DemoRouter extends RouteBuilder implements InitializingBean, CamelContextAware {
 
   @Autowired
   DemoService demoService;
 
   @Qualifier
   private String test;
+
+  @Value("${random.int(100)}")
+  private int randomNumber;
+
+  @Autowired
+  private CamelContext camelContext;
 
 
   public void runService(){
@@ -38,9 +45,32 @@ public class DemoRouter extends RouteBuilder implements InitializingBean {
   @Override
   public void configure() throws Exception {
     from("file:inbox?noop=true")
-           .to("file:outbox");
+            .routeId("MessageID" + randomNumber)
+            .log("RouteMessegaTransfer + RouteId ")
+            .process(exchange -> exchange.getIn())
+           .to("file:outbox?fileName=${exchange.fromRouteId}__${header.CamelFileName}+${properties:demo.router.name}");
 
     from("stream:in?promptMessage=Enter something:")
-                            .to("file:data/outbox");
+            .log("StreamTest")
+            .process(exchange -> exchange.getIn())
+                            .to("file:data/outbox?fileName=${body}");
+  }
+
+  @Override
+  public CamelContext getCamelContext() {
+    return camelContext;
+  }
+
+  @Override
+  public void setCamelContext(CamelContext camelContext) {
+    this.camelContext = camelContext;
+  }
+
+  public int getRandomNumber() {
+    return randomNumber;
+  }
+
+  public void setRandomNumber(int randomNumber) {
+    this.randomNumber = randomNumber;
   }
 }
