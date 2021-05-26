@@ -4,10 +4,14 @@ import com.example.demo.camelroutes.DemoRouter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Before;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -25,6 +29,7 @@ import java.io.File;
 
 import static org.apache.camel.test.junit4.TestSupport.deleteDirectory;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(CamelSpringBootRunner.class)
 @SpringBootTest(classes = DemoApplication.class,
@@ -32,7 +37,7 @@ import static org.junit.Assert.assertEquals;
         webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 // re-create Spring/Camel for each test
 @DirtiesContext
-class DemoApplicationTests extends CamelSpringTestSupport {
+class DemoApplicationTests  {
 
     @Autowired
     CamelContext camelContext;
@@ -41,17 +46,18 @@ class DemoApplicationTests extends CamelSpringTestSupport {
     ProducerTemplate producerTemplate;
 
 
+    @Before
     public void setUp() throws Exception {
         // delete directories so we have a clean start
         deleteDirectory("target/inbox");
         deleteDirectory("target/outbox");
-        super.setUp();
     }
 /*
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new DemoRouter();
     }*/
+
 
     @Test
     public void test(){
@@ -64,17 +70,18 @@ class DemoApplicationTests extends CamelSpringTestSupport {
         String t = "test";
         assertEquals(t, "test");
 
+        NotifyBuilder notifyBuilder = new NotifyBuilder(camelContext).whenDone(1).create();
         producerTemplate.sendBodyAndHeader("file://target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Thread.sleep(2000);
+        Assertions.assertTrue(notifyBuilder.matchesWaitTime());
 
         File target = new File("target/outbox/hello.txt");
 
         assertTrue("File is not here", target.exists());
     }
 
-    @Override
+  /*  @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new AnnotationConfigApplicationContext(DemoApplication.class);
-    }
+    }*/
 }
