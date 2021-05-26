@@ -50,6 +50,10 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
             .process(exchange -> exchange.getIn())
            .to("file:outbox?fileName=${exchange.fromRouteId}__${header.CamelFileName}+${properties:demo.router.name}");
 
+          from("file://target/inbox")
+                  .to("file://target/outbox");
+
+
     from("stream:in?promptMessage=Enter something:")
             .log("StreamTest")
             .process(exchange -> exchange.getIn())

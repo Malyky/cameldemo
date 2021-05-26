@@ -34,6 +34,13 @@
             <!-- use the same version as your Camel core version -->
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <version>3.9.0</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <!--   <dependency>
                <groupId>org.apache.camel</groupId>
