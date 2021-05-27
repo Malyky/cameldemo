@@ -21,8 +21,8 @@ import java.util.Arrays;
 //@Configuration
 //@EnableAutoConfiguration
 //@ComponentScan
-//@SpringBootApplication
-@SpringBootApplication(exclude = ActiveMQAutoConfiguration.class)
+@SpringBootApplication
+//@SpringBootApplication(exclude = ActiveMQAutoConfiguration.class)
 public class DemoApplication {
 
     public static void main(String[] args) throws Exception {

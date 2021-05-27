@@ -55,14 +55,14 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
                   .to("file://target/outbox");
 
 
-    from("stream:in?promptMessage=Enter something:")
-            .log("StreamTest")
-            .process(exchange -> exchange.getIn())
-                            .to("file:data/outbox?fileName=${body}");
+//    from("stream:in?promptMessage=Enter something:")
+//            .log("StreamTest")
+//            .process(exchange -> exchange.getIn())
+//                            .to("file:data/outbox?fileName=${body}");
 
     getCamelContext().addComponent("activemq", ActiveMQComponent.activeMQComponent("tcp://localhost:61616"));
-    from("file:outbox")
-            .log("Log to AtiveMQ")
+    from("file:outbox?noop=true")
+            .log("Log to Active")
             .to("activemq:bestellung");
   }
 
