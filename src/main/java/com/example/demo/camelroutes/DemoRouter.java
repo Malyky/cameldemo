@@ -3,6 +3,7 @@ package com.example.demo.camelroutes;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,6 +59,11 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
             .log("StreamTest")
             .process(exchange -> exchange.getIn())
                             .to("file:data/outbox?fileName=${body}");
+
+    getCamelContext().addComponent("activemq", ActiveMQComponent.activeMQComponent("tcp://localhost:61616"));
+    from("file:outbox")
+            .log("Log to AtiveMQ")
+            .to("activemq:bestellung");
   }
 
   @Override
