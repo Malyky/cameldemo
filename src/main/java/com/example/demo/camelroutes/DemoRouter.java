@@ -1,8 +1,11 @@
 package com.example.demo.camelroutes;
 
+import com.example.demo.entity.Order;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +30,9 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
   @Autowired
   private DemoValidatorProcessor demoValidatorProcessor;
 
+  @Autowired
+  private DemoCustomerName demoCustomerName;
+
   public void runService(){
     demoService.helloRouting(5);
   }
@@ -46,11 +52,22 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 
   @Override
   public void configure() throws Exception {
+
+    JacksonDataFormat jacksonDataFormat = new JacksonDataFormat();
+    jacksonDataFormat.setPrettyPrint(true);
+    jacksonDataFormat.enableFeature(SerializationFeature.WRAP_ROOT_VALUE);
+
+
     from("file:inbox?noop=true")
             .routeId("MessageID" + randomNumber)
             .log("RouteMessegaTransfer + RouteId ")
             .process(demoValidatorProcessor)
             .process(exchange -> exchange.getIn())
+            .unmarshal()
+            .jacksonxml(Order.class)
+     //      .marshal(jacksonDataFormat)
+            .bean(demoCustomerName, "xmlToJson")
+            .marshal(jacksonDataFormat)
            .to("file:outbox?fileName=${exchange.fromRouteId}__${header.CamelFileName}+${properties:demo.router.name}");
 
           from("file://target/inbox")
