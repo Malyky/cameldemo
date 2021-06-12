@@ -73,6 +73,19 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
             <groupId>junit</groupId>
@@ -88,6 +101,13 @@
             <!-- use the same version as your Camel core version -->
         </dependency>
 
+       <!-- <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-spring-boot-bom</artifactId>
+            <version>${camel.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>-->
 <!--        &lt;!&ndash; https://mvnrepository.com/artifact/activemq/activemq-spring &ndash;&gt;-->
 <!--        <dependency>-->
 <!--            <groupId>activemq</groupId>-->

@@ -12,6 +12,7 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -46,7 +47,7 @@ class DemoApplicationTests  {
     ProducerTemplate producerTemplate;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // delete directories so we have a clean start
         deleteDirectory("target/inbox");
@@ -71,7 +72,7 @@ class DemoApplicationTests  {
         assertEquals(t, "test");
 
         NotifyBuilder notifyBuilder = new NotifyBuilder(camelContext).whenDone(1).create();
-        producerTemplate.sendBodyAndHeader("file://target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        producerTemplate.sendBodyAndHeader("file://target/inbox?noop=true", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         Assertions.assertTrue(notifyBuilder.matchesWaitTime());
 

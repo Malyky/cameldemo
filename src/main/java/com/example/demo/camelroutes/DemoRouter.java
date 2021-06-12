@@ -3,7 +3,6 @@ package com.example.demo.camelroutes;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +24,8 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
   @Autowired
   private CamelContext camelContext;
 
+  @Autowired
+  private DemoValidatorProcessor demoValidatorProcessor;
 
   public void runService(){
     demoService.helloRouting(5);
@@ -48,6 +49,7 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
     from("file:inbox?noop=true")
             .routeId("MessageID" + randomNumber)
             .log("RouteMessegaTransfer + RouteId ")
+            .process(demoValidatorProcessor)
             .process(exchange -> exchange.getIn())
            .to("file:outbox?fileName=${exchange.fromRouteId}__${header.CamelFileName}+${properties:demo.router.name}");
 
@@ -82,5 +84,13 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 
   public void setRandomNumber(int randomNumber) {
     this.randomNumber = randomNumber;
+  }
+
+  public DemoValidatorProcessor getDemoProcessor() {
+    return demoValidatorProcessor;
+  }
+
+  public void setDemoProcessor(DemoValidatorProcessor demoValidatorProcessor) {
+    this.demoValidatorProcessor = demoValidatorProcessor;
   }
 }
