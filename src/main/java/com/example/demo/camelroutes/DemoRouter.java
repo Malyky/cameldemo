@@ -4,6 +4,7 @@ import com.example.demo.entity.Order;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,6 +33,9 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 
   @Autowired
   private DemoCustomerName demoCustomerName;
+
+  @Autowired
+  private ProducerTemplate producerTemplate;
 
   public void runService(){
     demoService.helloRouting(5);
@@ -100,6 +104,12 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 //                            .to("file:data/outbox?fileName=${body}");
 
     //getCamelContext().addComponent("activemq", ActiveMQComponent.activeMQComponent("tcp://localhost:61616"));
+
+    from("direct:in")
+            .log("test")
+            .to("stream:out");
+
+
 
 //
     from("file:outbox?noop=true")
