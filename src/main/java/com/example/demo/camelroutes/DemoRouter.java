@@ -74,14 +74,22 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
             .bean(demoCustomerName, "setNameAndTimestamp")
             .choice()
               .when(simple("${body.name} == 'motor'"))
-                .log("Body contains Motor ${body.name} ")
-                .marshal(jacksonDataFormat)
-                .to("file:outbox?fileName=${exchange.fromRouteId}.json")
+                .to("direct:motorRoute")
               .otherwise()
-                .log("Body does not contain Motor, but is ${body.name} ")
-                .marshal(jacksonDataFormat)
-                .to("file:outbox?fileName=${exchange.fromRouteId}.json")
+                .to("direct:nonMotorRoute")
              ;
+
+    from("direct:motorRoute")
+            .log("This is Motor Route")
+            .log("Body does not contain Motor, but is ${body.name} ")
+            .marshal(jacksonDataFormat)
+            .to("file:outbox?fileName=${exchange.fromRouteId}.json");
+
+    from("direct:nonMotorRoute")
+            .log("This is nonMotor Route")
+            .log("Body does not contain Motor, but is ${body.name} ")
+            .marshal(jacksonDataFormat)
+            .to("file:outbox?fileName=${exchange.fromRouteId}.json");
 
 //     from("file://target/inbox")
 //                  .to("file://target/outbox");
