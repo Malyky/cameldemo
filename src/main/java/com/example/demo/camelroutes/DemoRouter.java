@@ -76,11 +76,11 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
               .when(simple("${body.name} == 'motor'"))
                 .log("Body contains Motor ${body.name} ")
                 .marshal(jacksonDataFormat)
-                .to("file:outbox?fileName=${exchange.fromRouteId}__${header.CamelFileName}+${properties:demo.router.name}")
+                .to("file:outbox?fileName=${exchange.fromRouteId}.json")
               .otherwise()
                 .log("Body does not contain Motor, but is ${body.name} ")
                 .marshal(jacksonDataFormat)
-                .to("file:outbox?fileName=${exchange.fromRouteId}__${header.CamelFileName}+${properties:demo.router.name}")
+                .to("file:outbox?fileName=${exchange.fromRouteId}.json")
              ;
 
 //     from("file://target/inbox")
@@ -95,8 +95,11 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 
 //
     from("file:outbox?noop=true")
-            .log("Log to Active")
+            .log("Produce to ActiveMQ ${id}")
             .to("activemq:bestellung");
+
+    from("activemq:bestellung")
+            .log("Consume from ActiveMQ ${id}");
   }
 
   @Override
