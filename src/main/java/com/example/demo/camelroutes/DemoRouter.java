@@ -66,9 +66,16 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
             .unmarshal()
             .jacksonxml(Order.class)
             .bean(demoCustomerName, "setNameAndTimestamp")
-            .marshal(jacksonDataFormat)
-           .to("file:outbox?fileName=${exchange.fromRouteId}__${header.CamelFileName}+${properties:demo.router.name}");
-
+            .choice()
+              .when(simple("${body.name} == 'motor'"))
+                .log("Body contains Motor ${body.name} ")
+                .marshal(jacksonDataFormat)
+                .to("file:outbox?fileName=${exchange.fromRouteId}__${header.CamelFileName}+${properties:demo.router.name}")
+              .otherwise()
+                .log("Body does not contain Motor, but is ${body.name} ")
+                .marshal(jacksonDataFormat)
+                .to("file:outbox?fileName=${exchange.fromRouteId}__${header.CamelFileName}+${properties:demo.router.name}")
+             ;
 
 //     from("file://target/inbox")
 //                  .to("file://target/outbox");
