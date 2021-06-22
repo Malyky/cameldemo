@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.Date;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -15,6 +16,7 @@ public class Order implements Serializable {
     private int amount;
 
     private String customerName;
+    private Date timestamp;
 
     public Order() {
     }
@@ -66,5 +68,13 @@ public class Order implements Serializable {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
     }
 }

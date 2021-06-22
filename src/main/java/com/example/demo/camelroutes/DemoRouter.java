@@ -65,14 +65,13 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
             .process(exchange -> exchange.getIn())
             .unmarshal()
             .jacksonxml(Order.class)
-     //      .marshal(jacksonDataFormat)
-            .bean(demoCustomerName, "xmlToJson")
+            .bean(demoCustomerName, "setNameAndTimestamp")
             .marshal(jacksonDataFormat)
            .to("file:outbox?fileName=${exchange.fromRouteId}__${header.CamelFileName}+${properties:demo.router.name}");
 
-          from("file://target/inbox")
-                  .to("file://target/outbox");
 
+//     from("file://target/inbox")
+//                  .to("file://target/outbox");
 
 //    from("stream:in?promptMessage=Enter something:")
 //            .log("StreamTest")
@@ -80,6 +79,8 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 //                            .to("file:data/outbox?fileName=${body}");
 
     //getCamelContext().addComponent("activemq", ActiveMQComponent.activeMQComponent("tcp://localhost:61616"));
+
+//
     from("file:outbox?noop=true")
             .log("Log to Active")
             .to("activemq:bestellung");

@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 @Component
 public class DemoCustomerName {
@@ -24,10 +25,11 @@ public class DemoCustomerName {
 
        throw new Exception("Should not be called");
     }
-    public void xmlToJson(Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
+    public void setNameAndTimestamp(Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
 
        Order order = (Order) exchange.getIn().getBody();
 
        order.setCustomerName("Consol");
+       order.setTimestamp(new Date());
     }
 }
