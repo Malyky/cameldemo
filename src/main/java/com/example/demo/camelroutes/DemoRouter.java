@@ -83,13 +83,13 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
             .log("This is Motor Route")
             .log("Body does not contain Motor, but is ${body.name} ")
             .marshal(jacksonDataFormat)
-            .to("file:outbox?fileName=${exchange.fromRouteId}.json");
+            .to("file:outbox?fileName=${exchange.fromRouteId}_${id}.json");
 
     from("direct:nonMotorRoute")
             .log("This is nonMotor Route")
             .log("Body does not contain Motor, but is ${body.name} ")
             .marshal(jacksonDataFormat)
-            .to("file:outbox?fileName=${exchange.fromRouteId}.json");
+            .to("file:outbox?fileName=${exchange.fromRouteId}_${id}.json");
 
 //     from("file://target/inbox")
 //                  .to("file://target/outbox");
