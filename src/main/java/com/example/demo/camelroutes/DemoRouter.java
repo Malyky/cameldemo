@@ -21,7 +21,7 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
   @Qualifier
   private String test;
 
-  @Value("${random.int(100)}")
+  @Value("${random.int(11)}")
   private int randomNumber;
 
   @Autowired
@@ -62,7 +62,11 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
             .routeId("MessageID" + randomNumber)
             .log("RouteMessegaTransfer + RouteId ")
             .process(demoValidatorProcessor)
-            .process(exchange -> exchange.getIn())
+            .process(exchange -> exchange.getIn().setHeader("headerValue", randomNumber))
+            .choice()
+              .when(simple("${in.header.headerValue} < 10 "))
+                .log("Header contains value ${in.header.headerValue} ")
+            .end()
             .unmarshal()
             .jacksonxml(Order.class)
             .bean(demoCustomerName, "setNameAndTimestamp")
