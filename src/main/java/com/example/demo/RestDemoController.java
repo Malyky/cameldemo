@@ -43,10 +43,19 @@ public class RestDemoController {
     //@ResponseBody
     public String produce(@PathVariable String name, Model model){
 
-        producerTemplate.sendBody("direct:in", "Hello from Camel " + name);
+        producerTemplate.sendBody("direct:usehttp", "");
+        //producerTemplate.sendBody("direct:in", "Hello from Camel " + name);
 
         model.addAttribute("name", name);
-        return "produce";
+        return "empty";
+    }
+
+    @GetMapping("/callHttp/{number}")
+    public String callHttp(@PathVariable int number, Model model){
+
+        producerTemplate.sendBodyAndHeader("direct:usehttpQueryParam", "","postId", number);
+
+        return "empty";
     }
 
     public DemoRouter getDemoRouter() {
