@@ -76,16 +76,15 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
               .when(xpath("//name='motor'"))
                 .log("Header value > 5 => ${in.header.headerValue} and XPath name = Motor : ${exchangeId} ")
             .end()
-            .unmarshal(xmlDataFormat)
-            .marshal(jacksonDataFormat)
-            .to("file:outbox?fileName=${exchange.fromRouteId}_${id}.json")
+            .convertBodyTo(Order.class)
+//            .unmarshal()
 //            .jacksonxml(Order.class)
-//            .bean(demoCustomerName, "setNameAndTimestamp")
-//            .choice()
-//              .when(simple("${body.name} == 'motor'"))
-//                .to("direct:motorRoute")
-//              .otherwise()
-//                .to("direct:nonMotorRoute")
+            .bean(demoCustomerName, "setNameAndTimestamp")
+            .choice()
+              .when(simple("${body.name} == 'motor'"))
+                .to("direct:motorRoute")
+              .otherwise()
+                .to("direct:nonMotorRoute")
              ;
 
     from("direct:motorRoute")
@@ -113,6 +112,7 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
     from("direct:in")
             .log("test")
             .to("stream:out");
+
 
 
 
