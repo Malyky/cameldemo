@@ -121,14 +121,15 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 
 
     rest("/api")
-            .get()
+            .get("/")
+            .route()
+            .to("log:DEBUG?showBody=true&showHeaders=true")
+            .endRest()
+
+            .post("/post")
+            .type(Order.class)
             .route()
             .to("log:DEBUG?showBody=true&showHeaders=true");
-
-    rest("/api/post")
-            .post()
-            .to("log:DEBUG?showBody=true&showHeaders=true");
-
 
 
 //
