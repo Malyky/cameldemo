@@ -53,7 +53,7 @@ public class RestDemoController {
     @GetMapping("/callHttp/{number}")
     public String callHttp(@PathVariable int number, Model model){
 
-        producerTemplate.sendBodyAndHeader("direct:usehttpQueryParam", "","postId", number);
+        producerTemplate.sendBodyAndHeader("direct:httpWithHeader", "","postId", number);
 
         return "empty";
     }

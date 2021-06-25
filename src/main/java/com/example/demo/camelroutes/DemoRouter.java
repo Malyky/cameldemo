@@ -139,17 +139,17 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
                 .log("Use Http")
                 .setHeader(Exchange.HTTP_PATH, simple("/posts/5"))
                 .setHeader(Exchange.HTTP_METHOD, simple("GET"))
-                .to("http://jsonplaceholder.typicode.com?bridgeEndpoint=true")
+                .to("http://jsonplaceholder.typicode.com")
                 .convertBodyTo(String.class)
                 .log("BODY:  ${body}")
                 .to("log:DEBUG?showBody=true");
 
-        from("direct:usehttpQueryParam")
+        from("direct:httpWithHeader")
                 .log("Use Http")
               //  .setHeader(Exchange.HTTP_PATH, simple("/comments?postId=2"))
                 .setHeader(Exchange.HTTP_PATH, simple("/posts/${headers.postId}"))
                 .setHeader(Exchange.HTTP_METHOD, simple("GET"))
-                .to("http://jsonplaceholder.typicode.com?bridgeEndpoint=true")
+                .to("http://jsonplaceholder.typicode.com")
                 .convertBodyTo(String.class)
                 .log("BODY:  ${body}")
                 .to("log:DEBUG?showBody=true");;
