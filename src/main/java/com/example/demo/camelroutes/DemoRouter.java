@@ -126,6 +126,12 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
                 .route()
                 .routeId("Get")
                 .to("log:DEBUG?showBody=true&showHeaders=true")
+                .setHeader(Exchange.HTTP_PATH, simple("/posts/5"))
+                .setHeader(Exchange.HTTP_METHOD, simple("GET"))
+                .to("http://jsonplaceholder.typicode.com?bridgeEndpoint=true")
+                .convertBodyTo(String.class)
+                .log("BODY:  ${body}")
+                .to("log:DEBUG?showBody=true")
                 .endRest()
 
                 .post("/post")
