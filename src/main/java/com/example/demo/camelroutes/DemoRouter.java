@@ -1,6 +1,8 @@
 package com.example.demo.camelroutes;
 
+import com.example.demo.entity.Book;
 import com.example.demo.entity.Order;
+import com.example.demo.entity.StarwarsPeople;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -9,6 +11,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,8 +141,24 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
                 .type(Order.class)
                 .route()
                 .routeId("Post")
-                .to("log:DEBUG?showBody=true&showHeaders=true")
+                .to("log:DEBUG?showBody=true")
                 .endRest();
+
+                //url -X POST --header "Content-Type: application/json" -d '{"name":"motor", "amount":"5"}'  http://localhost:8080/demo/api/post
+
+//                .get("/starwars/films")
+//               // .type(StarwarsPeople.class)
+//                .route()
+//                .routeId("GetFilms")
+//                .setHeader(Exchange.HTTP_PATH, simple("/people/1"))
+//                .setHeader(Exchange.HTTP_METHOD, simple("GET"))
+//                .to("http://swapi.dev/api?bridgeEndpoint=true")
+//                .convertBodyTo(String.class) // convert body to String, to help Jackson serialise https://stackoverflow.com/questions/48798907/jsonmappingexception-with-apache-camel/48801071
+//                .unmarshal(jacksonDataFormat)
+//                .convertBodyTo(StarwarsPeople.class)
+//                //   .log("${body}")
+//                .to("log:DEBUG?showBody=true")
+//        .endRest();
 
         from("direct:usehttp")
                 .log("Use Http")
@@ -156,9 +175,14 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
                 .setHeader(Exchange.HTTP_PATH, simple("/posts/${headers.postId}"))
                 .setHeader(Exchange.HTTP_METHOD, simple("GET"))
                 .to("http://jsonplaceholder.typicode.com")
-                .convertBodyTo(String.class)
+                .unmarshal().json(JsonLibrary.Jackson, Book.class)
+                //.convertBodyTo(String.class)
+                //.unmarshal(jacksonDataFormat)
+               // .jacksonxml()
                 .log("BODY:  ${body}")
-                .to("log:DEBUG?showBody=true");;
+                .to("log:DEBUG?showBody=true");
+
+
 
 
 //
