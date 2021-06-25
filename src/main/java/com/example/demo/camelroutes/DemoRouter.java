@@ -8,6 +8,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -76,9 +77,8 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
               .when(xpath("//name='motor'"))
                 .log("Header value > 5 => ${in.header.headerValue} and XPath name = Motor : ${exchangeId} ")
             .end()
-            .convertBodyTo(Order.class)
-//            .unmarshal()
-//            .jacksonxml(Order.class)
+            .unmarshal()
+            .jacksonxml(Order.class)
             .bean(demoCustomerName, "setNameAndTimestamp")
             .choice()
               .when(simple("${body.name} == 'motor'"))
@@ -113,15 +113,32 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
             .log("test")
             .to("stream:out");
 
+    restConfiguration().component("servlet")
+            .host("localhost")
+            .port(8080)
+            .contextPath("/demo/*")
+            .bindingMode(RestBindingMode.auto);
+
+
+    rest("/api")
+            .get()
+            .route()
+            .to("log:DEBUG?showBody=true&showHeaders=true");
+
+    rest("/api/post")
+            .post()
+            .to("log:DEBUG?showBody=true&showHeaders=true");
 
 
 
 //
 //    from("file:outbox?noop=true")
+ //             .routeId("ActiveMQProducer")
 //            .log("Produce to ActiveMQ ${id}")
 //            .to("activemq:bestellung");
 //
 //    from("activemq:bestellung")
+     //         .routeId("ActiveMQConsumer")
 //            .log("Consume from ActiveMQ ${id}");
   }
 
