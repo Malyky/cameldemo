@@ -7,6 +7,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
+import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,7 +60,9 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 
     JacksonDataFormat jacksonDataFormat = new JacksonDataFormat();
     jacksonDataFormat.setPrettyPrint(true);
-    jacksonDataFormat.enableFeature(SerializationFeature.WRAP_ROOT_VALUE);
+    //jacksonDataFormat.enableFeature();
+
+    JacksonXMLDataFormat xmlDataFormat = new JacksonXMLDataFormat();
 
 
     from("file:inbox?noop=true")
@@ -73,14 +76,16 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
               .when(xpath("//name='motor'"))
                 .log("Header value > 5 => ${in.header.headerValue} and XPath name = Motor : ${exchangeId} ")
             .end()
-            .unmarshal()
-            .jacksonxml(Order.class)
-            .bean(demoCustomerName, "setNameAndTimestamp")
-            .choice()
-              .when(simple("${body.name} == 'motor'"))
-                .to("direct:motorRoute")
-              .otherwise()
-                .to("direct:nonMotorRoute")
+            .unmarshal(xmlDataFormat)
+            .marshal(jacksonDataFormat)
+            .to("file:outbox?fileName=${exchange.fromRouteId}_${id}.json")
+//            .jacksonxml(Order.class)
+//            .bean(demoCustomerName, "setNameAndTimestamp")
+//            .choice()
+//              .when(simple("${body.name} == 'motor'"))
+//                .to("direct:motorRoute")
+//              .otherwise()
+//                .to("direct:nonMotorRoute")
              ;
 
     from("direct:motorRoute")
@@ -112,12 +117,12 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 
 
 //
-    from("file:outbox?noop=true")
-            .log("Produce to ActiveMQ ${id}")
-            .to("activemq:bestellung");
-
-    from("activemq:bestellung")
-            .log("Consume from ActiveMQ ${id}");
+//    from("file:outbox?noop=true")
+//            .log("Produce to ActiveMQ ${id}")
+//            .to("activemq:bestellung");
+//
+//    from("activemq:bestellung")
+//            .log("Consume from ActiveMQ ${id}");
   }
 
   @Override
