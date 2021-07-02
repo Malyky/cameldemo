@@ -58,6 +58,16 @@ public class RestDemoController {
         return "empty";
     }
 
+    @GetMapping("/weather/{city}")
+    public String callHttp(@PathVariable String city, Model model){
+
+        producerTemplate.sendBodyAndHeader("direct:weather", "","city", city);
+
+        return "empty";
+    }
+
+
+
     public DemoRouter getDemoRouter() {
         return demoRouter;
     }

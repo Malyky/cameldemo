@@ -183,6 +183,24 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
                 .to("log:DEBUG?showBody=true");
 
 
+        from("direct:weather")
+                .log("Weather is called")
+                .setHeader(Exchange.HTTP_PATH, simple("/?key=GdVZCathGlyA31NJOAATcYAK4Gl2ASW6&location=${header.city}&maxResults=1"))
+                .setHeader(Exchange.HTTP_METHOD, simple("GET"))
+                .to("http://www.mapquestapi.com/geocoding/v1/address")
+                .to("log:DEBUG?showBody=true")
+                .log("Body: ${body}")
+                .setHeader("longtitude", jsonpath("$..displayLatLng.lng"))
+                .setHeader("latitude", jsonpath("$..displayLatLng.lat"))
+                .log("Headers: Longtitude:  ${header.longtitude}, Latitude: ${header.latitude}")
+                .log("How is the weather in ${header.city}?");
+//                .setHeader(Exchange.HTTP_PATH, simple("/?key=GdVZCathGlyA31NJOAATcYAK4Gl2ASW6&location=Muenchen,DE&maxResults=1"))
+//                .setHeader(Exchange.HTTP_METHOD, simple("GET"))
+               // .toD("http://api.openweathermap.org/data/2.5/weather?lat=${header.latitude}&lon={header.longtitude}=&appid=da6608691938e4a522e1fe5da3e5a175");
+
+
+
+
 
 
 //

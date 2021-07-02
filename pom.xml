@@ -165,6 +165,13 @@
             <!-- use the same version as your Camel core version -->
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-jsonpath-starter</artifactId>
+            <version>${camel.version}</version>
+            <!-- use the same version as your Camel core version -->
+        </dependency>
+
     </dependencies>
 
     <build>
