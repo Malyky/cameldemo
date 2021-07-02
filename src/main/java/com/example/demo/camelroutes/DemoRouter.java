@@ -271,7 +271,8 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 
         from("direct:weather")
                 .log("Weather is called")
-                .setHeader(Exchange.HTTP_PATH, simple("/?key=GdVZCathGlyA31NJOAATcYAK4Gl2ASW6&location=${header.city}&maxResults=1"))
+                .setHeader(Exchange.HTTP_PATH, simple("/"))
+                .setHeader(Exchange.HTTP_QUERY, simple("key=GdVZCathGlyA31NJOAATcYAK4Gl2ASW6&location=${header.city}&maxResults=1"))
                 .setHeader(Exchange.HTTP_METHOD, simple("GET"))
                 .to("http://www.mapquestapi.com/geocoding/v1/address")
                 .to("log:DEBUG?showBody=true")
