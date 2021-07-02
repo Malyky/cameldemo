@@ -155,7 +155,62 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 
         from("activemq:wetter")
         .log("Consumed from ActiveMQ: ${body}")
+                .setHeader("stadtName", jsonpath("$.stadt"))
+                .to("direct:weather")
         .end();
+
+
+        from("direct:weather")
+                .log("Getting Weather is called")
+                .toD("http://www.mapquestapi.com/geocoding/v1/address/?key=GdVZCathGlyA31NJOAATcYAK4Gl2ASW6&location=${header.stadtName}&maxResults=1")
+                .to("log:DEBUG?showBody=true")
+                .log("Body: ${body}")
+                .setHeader("longtitude", jsonpath("$..displayLatLng.lng"))
+                .setHeader("latitude", jsonpath("$..displayLatLng.lat"))
+                .log("Headers: Longtitude:  ${header.longtitude}, Latitude: ${header.latitude}")
+                .log("How is the weather in ${header.stadtName}?")
+                .toD("http://api.openweathermap.org/data/2.5/weather?lat=${header.latitude}&lon=${header.longtitude}&units=metric&appid=da6608691938e4a522e1fe5da3e5a175")
+                .to("log:DEBUG?showBody=true")
+                .log("Body: ${body}")
+                .setHeader("DescriptionWeather", jsonpath("$.weather..description"))
+                .setHeader("Temp", jsonpath("$.main.temp"))
+                .log("Description: ${header.DescriptionWeather} and Temp: ${header.Temp}");
+
+
+        /**
+         * 6. Step Rest Componente
+         *
+         */
+        restConfiguration().component("servlet")
+                .host("localhost")
+                .port(8080)
+                .contextPath("/demo/*")
+                .bindingMode(RestBindingMode.auto);
+
+
+        rest("/api")
+                .get("/weather/{stadt}")
+                .route()
+                .routeId("GetWeather")
+
+                .setHeader("stadtName", simple("${header.stadt}"))
+
+                .log("Getting Weather is called")
+                .toD("http://www.mapquestapi.com/geocoding/v1/address/?bridgeEndpoint=true&key=GdVZCathGlyA31NJOAATcYAK4Gl2ASW6&location=${header.stadtName}&maxResults=1")
+                .to("log:DEBUG?showBody=true")
+                .log("Body: ${body}")
+                .setHeader("longtitude", jsonpath("$..displayLatLng.lng"))
+                .setHeader("latitude", jsonpath("$..displayLatLng.lat"))
+                .log("Headers: Longtitude:  ${header.longtitude}, Latitude: ${header.latitude}")
+                .log("How is the weather in ${header.stadtName}?")
+                .toD("http://api.openweathermap.org/data/2.5/weather?bridgeEndpoint=true&lat=${header.latitude}&lon=${header.longtitude}&units=metric&appid=da6608691938e4a522e1fe5da3e5a175")
+                .to("log:DEBUG?showBody=true")
+                .log("Body: ${body}")
+                .setHeader("DescriptionWeather", jsonpath("$.weather..description"))
+                .setHeader("Temp", jsonpath("$.main.temp"))
+                .log("Description: ${header.DescriptionWeather} and Temp: ${header.Temp}")
+                .endRest();
+
 
 
 //
@@ -202,35 +257,35 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
         from("direct:in")
                 .log("test")
                 .to("stream:out");
+//
+//        restConfiguration().component("servlet")
+//                .host("localhost")
+//                .port(8080)
+//                .contextPath("/demo/*")
+//                .bindingMode(RestBindingMode.auto);
 
-        restConfiguration().component("servlet")
-                .host("localhost")
-                .port(8080)
-                .contextPath("/demo/*")
-                .bindingMode(RestBindingMode.auto);
 
+//        rest("/api")
+//                .get("/")
+//                .route()
+//                .routeId("Get")
+//                .to("log:DEBUG?showBody=true&showHeaders=true")
+//                .setHeader(Exchange.HTTP_PATH, simple("/posts/5"))
+//                .setHeader(Exchange.HTTP_METHOD, simple("GET"))
+//                .to("http://jsonplaceholder.typicode.com?bridgeEndpoint=true")
+//                .convertBodyTo(String.class)
+//                .log("BODY:  ${body}")
+//                .to("log:DEBUG?showBody=true")
+//                .endRest()
 
-        rest("/api")
-                .get("/")
-                .route()
-                .routeId("Get")
-                .to("log:DEBUG?showBody=true&showHeaders=true")
-                .setHeader(Exchange.HTTP_PATH, simple("/posts/5"))
-                .setHeader(Exchange.HTTP_METHOD, simple("GET"))
-                .to("http://jsonplaceholder.typicode.com?bridgeEndpoint=true")
-                .convertBodyTo(String.class)
-                .log("BODY:  ${body}")
-                .to("log:DEBUG?showBody=true")
-                .endRest()
+//                .post("/post")
+//                .type(Order.class)
+//                .route()
+//                .routeId("Post")
+//                .to("log:DEBUG?showBody=true")
+//                .endRest();
 
-                .post("/post")
-                .type(Order.class)
-                .route()
-                .routeId("Post")
-                .to("log:DEBUG?showBody=true")
-                .endRest();
-
-                //url -X POST --header "Content-Type: application/json" -d '{"name":"motor", "amount":"5"}'  http://localhost:8080/demo/api/post
+//                url -X POST --header "Content-Type: application/json" -d '{"name":"motor", "amount":"5"}'  http://localhost:8080/demo/api/post
 
 //                .get("/starwars/films")
 //               // .type(StarwarsPeople.class)
@@ -269,21 +324,6 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
                 .to("log:DEBUG?showBody=true");
 
 
-        from("direct:weather")
-                .log("Weather is called")
-                .toD("http://www.mapquestapi.com/geocoding/v1/address/?key=GdVZCathGlyA31NJOAATcYAK4Gl2ASW6&location=${header.city}&maxResults=1")
-                .to("log:DEBUG?showBody=true")
-                .log("Body: ${body}")
-                .setHeader("longtitude", jsonpath("$..displayLatLng.lng"))
-                .setHeader("latitude", jsonpath("$..displayLatLng.lat"))
-                .log("Headers: Longtitude:  ${header.longtitude}, Latitude: ${header.latitude}")
-                .log("How is the weather in ${header.city}?")
-                .toD("http://api.openweathermap.org/data/2.5/weather?lat=${header.latitude}&lon=${header.longtitude}&units=metric&appid=da6608691938e4a522e1fe5da3e5a175")
-                .to("log:DEBUG?showBody=true")
-                .log("Body: ${body}")
-                .setHeader("DescriptionWeather", jsonpath("$.weather..description"))
-                .setHeader("Temp", jsonpath("$.main.temp"))
-                .log("Description: ${header.DescriptionWeather} and Temp: ${header.Temp}");
 
 
 
