@@ -32,9 +32,6 @@ public class RestDemoController {
         List<Book> books = Arrays.asList(new Book("Game of Thrones", "JrrMartin"), new Book("Lord of the Rings", "Tolkin"));
         model.addAttribute("books", books);
 
-        demoRouter.runService();
-
-
         return "camel";
     }
 

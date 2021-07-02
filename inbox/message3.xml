@@ -2,10 +2,10 @@
 <freundschaftsspiel>
     <id>1</id>
     <sportart>Fußball</sportart>
-    <stadt>Muenchen,DE</stadt>
+    <stadt>London,EN</stadt>
     <stadion>
-        <name>AlianzArena</name>
-        <sitzplaetze>63000</sitzplaetze>
+        <name>Emirates Stadion</name>
+        <sitzplaetze>60000</sitzplaetze>
         <ueberdacht>false</ueberdacht>
     </stadion>
 </freundschaftsspiel>

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<order>
-    <name>nonmotor</name>
-    <amount>1</amount>
-</order>
+<freundschaftsspiel>
+    <id>2</id>
+    <sportart>Handball</sportart>
+    <stadt>Regensburg,DE</stadt>
+    <stadion>
+        <name>DonauArena</name>
+        <sitzplaetze>7700</sitzplaetze>
+        <ueberdacht>true</ueberdacht>
+    </stadion>
+</freundschaftsspiel>

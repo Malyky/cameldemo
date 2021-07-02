@@ -1,6 +1,7 @@
 package com.example.demo.camelroutes;
 
 import com.example.demo.entity.Book;
+import com.example.demo.entity.Freundschaftspiel;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.StarwarsPeople;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -25,12 +26,6 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
     @Autowired
     DemoService demoService;
 
-    @Qualifier
-    private String test;
-
-    @Value("${random.int(11)}")
-    private int randomNumber;
-
     @Autowired
     private CamelContext camelContext;
 
@@ -43,19 +38,13 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
     @Autowired
     private ProducerTemplate producerTemplate;
 
-    public void runService() {
-        demoService.helloRouting(5);
-    }
+    @Autowired
+    private DemoFreundschaftsspielValidator demoFreundschaftsspielValidator;
 
     @Override
     public void afterPropertiesSet() throws Exception {
 
     }
-
-    public DemoService getDemoService() {
-        return demoService;
-    }
-
     public void setDemoService(DemoService demoService) {
         this.demoService = demoService;
     }
@@ -65,30 +54,127 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
 
         JacksonDataFormat jacksonDataFormat = new JacksonDataFormat();
         jacksonDataFormat.setPrettyPrint(true);
-        //jacksonDataFormat.enableFeature();
-
         JacksonXMLDataFormat xmlDataFormat = new JacksonXMLDataFormat();
 
 
+
+        /**
+         * First Step File Transfer
+         */
+//        from("file:inbox?noop=true")
+//                .routeId("File Transfer Route")
+//
+//                .log("RouteMessageTransfer on Route + ${routeId} ")
+//                .log("Body: ${body}")
+//        .to("file:outbox");
+
+//        /**
+//         * Second Step Xpath
+//         */
+//
+//        from("file:inbox?noop=true")
+//                .routeId("File Transfer Route #2")
+//                .log("Body: ${body}")
+//                .setHeader("arenaName", xpath("//stadion/name/text()"))
+//                .to("file:outbox?fileName=${headers.arenaName}.xml");
+
+        /**
+         * Third Step Choice/When
+         */
+
+//        from("file:inbox?noop=true")
+//                .routeId("File Transfer Route #2")
+//                .setHeader("arenaName", xpath("//stadion/name/text()"))
+//                .choice()
+//                    .when(xpath("//stadion/ueberdacht='false'"))
+//                    .log("Stadion ${header.arenaName} hat kein Dach. Wetter sollte nachgeschaut werden")
+//                    .to("file:outbox?fileName=${headers.arenaName}.xml")
+//                    .otherwise()
+//                    .log("Stadion ${header.arenaName} hat ein Dach. Wetter ist unwichtig")
+
+
+
+        /**
+         * 4. Step Marshalling & Validations
+         */
+
+//        from("file:inbox?noop=true")
+//                .routeId("File Transfer Route #2")
+//                .setHeader("arenaName", xpath("//stadion/name/text()"))
+//                .choice()
+//                    .when(xpath("//stadion/ueberdacht='false'"))
+//                    .log("Stadion ${header.arenaName} hat kein Dach. Wetter sollte nachgeschaut werden")
+//                    .unmarshal()
+//                    .jacksonxml(Freundschaftspiel.class)
+//                .log("Body: ${body}")
+//                .process(exchange -> exchange.getIn().getBody())
+//                .process(demoFreundschaftsspielValidator) // geht auch mit Methodenangabe (camel hat algorithmus wie es richtige Methode findet)
+//                .log("ValidationDate: ${body.validationDate}")
+//                .marshal(jacksonDataFormat)
+//                .to("file:outbox?fileName=${header.arenaName}.json")
+//                 .end();
+
+
+        /**
+         * 4. Step ActiveMQ?
+         */
+
         from("file:inbox?noop=true")
-                .routeId("MessageID" + randomNumber)
-                .log("RouteMessegaTransfer + RouteId ")
-                .process(demoValidatorProcessor)
-                .process(exchange -> exchange.getIn().setHeader("headerValue", randomNumber))
+                .routeId("File Transfer Route #2")
+                .setHeader("arenaName", xpath("//stadion/name/text()"))
                 .choice()
-                .when(simple("${in.header.headerValue} < 5 "))
-                .log("Header value < 5 => ${in.header.headerValue} : ${exchangeId}")
-                .when(xpath("//name='motor'"))
-                .log("Header value > 5 => ${in.header.headerValue} and XPath name = Motor : ${exchangeId} ")
-                .end()
+                .when(xpath("//stadion/ueberdacht='false'"))
+                .log("Stadion ${header.arenaName} hat kein Dach. Wetter sollte nachgeschaut werden")
                 .unmarshal()
-                .jacksonxml(Order.class)
-                .bean(demoCustomerName, "setNameAndTimestamp")
-                .choice()
-                .when(simple("${body.name} == 'motor'"))
-                .to("direct:motorRoute")
-                .otherwise()
-                .to("direct:nonMotorRoute")
+                .jacksonxml(Freundschaftspiel.class)
+                .log("Body: ${body}")
+                .process(exchange -> exchange.getIn().getBody())
+                .process(demoFreundschaftsspielValidator) // geht auch mit Methodenangabe (camel hat algorithmus wie es richtige Methode findet)
+                .log("ValidationDate: ${body.validationDate}")
+                .marshal(jacksonDataFormat)
+                .log("Produce to ActiveMQ")
+                .to("activemq:wetter")
+                .end();
+
+
+
+        /**
+         * 5. Step ActiveMQ Consumption
+         *
+         */
+
+//        from("activemq:wetter")
+//        .log("Consumed from ActiveMQ: ${body}")
+//        .end();
+
+
+        /**
+         * 6. Step Http Componente
+         *
+         */
+
+        from("activemq:wetter")
+        .log("Consumed from ActiveMQ: ${body}")
+        .end();
+
+
+//
+//                .process(demoValidatorProcessor)
+//                .process(exchange -> exchange.getIn().setHeader("headerValue", 1))
+//                .choice()
+//                .when(simple("${in.header.headerValue} < 5 "))
+//                .log("Header value < 5 => ${in.header.headerValue} : ${exchangeId}")
+//                .when(xpath("//name='motor'"))
+//                .log("Header value > 5 => ${in.header.headerValue} and XPath name = Motor : ${exchangeId} ")
+//                .end()
+//                .unmarshal()
+//                .jacksonxml(Order.class)
+//                .bean(demoCustomerName, "setNameAndTimestamp")
+//                .choice()
+//                .when(simple("${body.name} == 'motor'"))
+//                .to("direct:motorRoute")
+//                .otherwise()
+//                .to("direct:nonMotorRoute")
         ;
 
         from("direct:motorRoute")
@@ -204,14 +290,6 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    public int getRandomNumber() {
-        return randomNumber;
-    }
-
-    public void setRandomNumber(int randomNumber) {
-        this.randomNumber = randomNumber;
     }
 
     public DemoValidatorProcessor getDemoProcessor() {
