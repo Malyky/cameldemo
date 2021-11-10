@@ -163,7 +163,7 @@ public class DemoRouter extends RouteBuilder implements InitializingBean, CamelC
         from("direct:weather")
                 .log("Getting Weather is called")
                 .toD("http://www.mapquestapi.com/geocoding/v1/address/?key=GdVZCathGlyA31NJOAATcYAK4Gl2ASW6&location=${header.stadtName}&maxResults=1")
-                .to("log:DEBUG?showBody=true")
+             //   .to("log:DEBUG?showBody=true")
                 .log("Body: ${body}")
                 .setHeader("longtitude", jsonpath("$..displayLatLng.lng"))
                 .setHeader("latitude", jsonpath("$..displayLatLng.lat"))
