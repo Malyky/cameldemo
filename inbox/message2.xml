@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<freundschaftsspiel>
+<konzert>
     <id>2</id>
-    <sportart>Handball</sportart>
-    <stadt>Regensburg,DE</stadt>
+    <stadt>Duesseldorf,DE</stadt>
+    <kuenstler>Phil Collins</kuenstler>
     <stadion>
-        <name>DonauArena</name>
-        <sitzplaetze>7700</sitzplaetze>
+        <name>ISS Dome</name>
+        <sitzplaetze>10500</sitzplaetze>
         <ueberdacht>true</ueberdacht>
     </stadion>
-</freundschaftsspiel>
+</konzert>

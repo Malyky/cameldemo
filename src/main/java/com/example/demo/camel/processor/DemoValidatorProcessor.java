@@ -1,4 +1,4 @@
-package com.example.demo.camelroutes;
+package com.example.demo.camel.processor;
 
 import com.example.demo.util.FileReaderUtil;
 import org.apache.camel.Exchange;

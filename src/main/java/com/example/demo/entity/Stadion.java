@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 public class Stadion {
 
-
     private String name;
 
     private int sitzplaetze;
@@ -40,5 +39,14 @@ public class Stadion {
 
     public void setUeberdacht(boolean ueberdacht) {
         this.ueberdacht = ueberdacht;
+    }
+
+    @Override
+    public String toString() {
+        return "Stadion{" +
+                "name='" + name + '\'' +
+                ", sitzplaetze=" + sitzplaetze +
+                ", ueberdacht=" + ueberdacht +
+                '}';
     }
 }

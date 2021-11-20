@@ -1,6 +1,6 @@
-package com.example.demo;
+package com.example.demo.camel.rest;
 
-import com.example.demo.camelroutes.DemoRouter;
+import com.example.demo.camel.route.DemoRoute;
 import com.example.demo.entity.Book;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import java.util.List;
 public class RestDemoController {
 
     @Autowired
-    private DemoRouter demoRouter;
+    private DemoRoute demoRoute;
 
 
     @Autowired
@@ -65,11 +65,11 @@ public class RestDemoController {
 
 
 
-    public DemoRouter getDemoRouter() {
-        return demoRouter;
+    public DemoRoute getDemoRouter() {
+        return demoRoute;
     }
 
-    public void setDemoRouter(DemoRouter demoRouter) {
-        this.demoRouter = demoRouter;
+    public void setDemoRouter(DemoRoute demoRoute) {
+        this.demoRoute = demoRoute;
     }
 }

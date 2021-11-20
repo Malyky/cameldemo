@@ -8,7 +8,7 @@ import java.util.Date;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Freundschaftspiel {
+public class Konzert {
 
     @XmlElement
     private int id;
@@ -17,7 +17,7 @@ public class Freundschaftspiel {
     private String stadt;
 
     @XmlElement
-    private Sportart sportart;
+    private String kuenstler;
 
     @XmlElement
     private Stadion stadion;
@@ -25,14 +25,14 @@ public class Freundschaftspiel {
     private Date validationDate;
 
 
-    public Freundschaftspiel(int id, String stadt, Sportart sportart, Stadion stadion) {
+    public Konzert(int id, String stadt, String kuenstler, Stadion stadion) {
         this.id = id;
         this.stadt = stadt;
-        this.sportart = sportart;
+        this.kuenstler = kuenstler;
         this.stadion = stadion;
     }
 
-    public Freundschaftspiel() {
+    public Konzert() {
     }
 
     public int getId() {
@@ -51,14 +51,6 @@ public class Freundschaftspiel {
         this.stadt = stadt;
     }
 
-    public Sportart getSportart() {
-        return sportart;
-    }
-
-    public void setSportart(Sportart sportart) {
-        this.sportart = sportart;
-    }
-
     public Stadion getStadion() {
         return stadion;
     }
@@ -73,5 +65,24 @@ public class Freundschaftspiel {
 
     public void setValidationDate(Date validationDate) {
         this.validationDate = validationDate;
+    }
+
+    public String getKuenstler() {
+        return kuenstler;
+    }
+
+    public void setKuenstler(String kuenstler) {
+        this.kuenstler = kuenstler;
+    }
+
+    @Override
+    public String toString() {
+        return "Konzert{" +
+            "id=" + id +
+            ", stadt='" + stadt + '\'' +
+            ", kuenstler='" + kuenstler + '\'' +
+            ", stadion=" + stadion +
+            ", validationDate=" + validationDate +
+            '}';
     }
 }

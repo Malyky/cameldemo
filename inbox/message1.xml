@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<freundschaftsspiel>
+<konzert>
     <id>1</id>
-    <sportart>Fußball</sportart>
     <stadt>Muenchen,DE</stadt>
+    <kuenstler>Elton John</kuenstler>
     <stadion>
         <name>AlianzArena</name>
         <sitzplaetze>63000</sitzplaetze>
         <ueberdacht>false</ueberdacht>
     </stadion>
-</freundschaftsspiel>
+</konzert>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<freundschaftsspiel>
+<konzert>
     <id>1</id>
-    <sportart>Fußball</sportart>
     <stadt>London,EN</stadt>
+    <kuenstler>Eminem</kuenstler>
     <stadion>
         <name>Emirates Stadion</name>
         <sitzplaetze>60000</sitzplaetze>
         <ueberdacht>false</ueberdacht>
     </stadion>
-</freundschaftsspiel>
+</konzert>
