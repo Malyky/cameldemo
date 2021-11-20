@@ -41,7 +41,6 @@
             <version>${camel.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-activemq-starter</artifactId>
@@ -82,12 +81,6 @@
             <artifactId>camel-jsonpath-starter</artifactId>
             <version>${camel.version}</version>
             <!-- use the same version as your Camel core version -->
-        </dependency>
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20180813</version>
         </dependency>
 
         <dependency>

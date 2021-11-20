@@ -118,7 +118,7 @@ public class DemoRoute extends RouteBuilder implements InitializingBean, CamelCo
          * 4. Step ActiveMQ?
          */
 
-/*        from(file("inbox?noop=true"))
+        from(file("inbox?noop=true"))
             .routeId("File Transfer Route #2")
             .setHeader("arenaName", xpath("//stadion/name/text()"))
             .choice()
@@ -127,13 +127,12 @@ public class DemoRoute extends RouteBuilder implements InitializingBean, CamelCo
                     .unmarshal()
                     .jacksonxml(Konzert.class)
                     .log("Body: ${body}")
-                    .process(exchange -> exchange.getIn().getBody())
                     .process(demoFreundschaftsspielValidator) // geht auch mit Methodenangabe (camel hat algorithmus wie es richtige Methode findet)
                     .log("ValidationDate: ${body.validationDate}")
                     .marshal(jacksonDataFormat)
                     .log("Produce to ActiveMQ")
                     .to("activemq:staedte")
-            .end();*/
+            .end();
 
 
 
@@ -153,6 +152,7 @@ public class DemoRoute extends RouteBuilder implements InitializingBean, CamelCo
          */
 
         from(activemq("staedte"))
+            .routeId("ActiveMQ Staedte Consumption")
             .log("Consumed from ActiveMQ: ${body}")
             .setHeader("stadtName", jsonpath("$.stadt"))
             .to(direct("weather"))
@@ -160,6 +160,7 @@ public class DemoRoute extends RouteBuilder implements InitializingBean, CamelCo
 //
 //
         from(direct("weather"))
+            .routeId("Weather")
             .log("Getting Weather is called with body ${header.stadtName} and ${body}")
             .toD(http("www.mapquestapi.com/geocoding/v1/address/?key=GdVZCathGlyA31NJOAATcYAK4Gl2ASW6&location=${header.stadtName}&maxResults=1"))
             .convertBodyTo(String.class)
